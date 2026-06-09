@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MK13 SWS — The Magnum Arrow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --black:    #090A0C;
+    --dark:     #111418;
+    --steel:    #1A1E24;
+    --mid:      #252B34;
+    --ember:    #B82E22;
+    --ember-dim:#7A1E16;
+    --silver:   #8A9BAD;
+    --cream:    #D4CFC8;
+    --white:    #EAE8E4;
+    --mono:     'Share Tech Mono', monospace;
+    --display:  'Oswald', sans-serif;
+    --body:     'Crimson Text', Georgia, serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: var(--body);
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(9,10,12,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(184,46,34,0.3);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 56px;
+  }
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--ember);
+    text-transform: uppercase;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--silver);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ember); }
+
+  /* ── HERO ── */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--black);
+    overflow: hidden;
+  }
+
+  /* Crosshair reticle — the signature element */
+  .reticle {
+    position: absolute;
+    width: 520px; height: 520px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.07;
+    animation: reticle-pulse 6s ease-in-out infinite;
+  }
+  @keyframes reticle-pulse {
+    0%,100% { opacity: 0.05; transform: translate(-50%,-50%) scale(1); }
+    50%      { opacity: 0.10; transform: translate(-50%,-50%) scale(1.02); }
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(138,155,173,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138,155,173,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .scan-line {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--ember) 30%, var(--ember) 70%, transparent);
+    opacity: 0;
+    animation: scan 8s linear infinite;
+  }
+  @keyframes scan {
+    0%   { top: -2px; opacity: 0; }
+    5%   { opacity: 0.4; }
+    95%  { opacity: 0.4; }
+    100% { top: 100%; opacity: 0; }
+  }
+
+  .hero-content {
+    position: relative; z-index: 2;
+    text-align: center;
+    padding: 2rem;
+    max-width: 900px;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.35em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-title {
+    font-family: var(--display);
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .hero-title span { color: var(--ember); }
+
+  .hero-subtitle {
+    font-family: var(--display);
+    font-size: clamp(1rem, 2.5vw, 1.6rem);
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: var(--silver);
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+
+  .hero-quote {
+    font-family: var(--body);
+    font-style: italic;
+    font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+    color: var(--cream);
+    max-width: 700px;
+    margin: 0 auto 3.5rem;
+    line-height: 1.8;
+    border-left: 2px solid var(--ember);
+    padding-left: 1.5rem;
+    text-align: left;
+  }
+
+  .hero-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    max-width: 820px;
+    margin: 0 auto;
+    border: 1px solid rgba(138,155,173,0.15);
+  }
+  .hero-card {
+    background: rgba(26,30,36,0.8);
+    padding: 1.4rem 1rem;
+    text-decoration: none;
+    transition: background 0.25s;
+    text-align: center;
+    border-right: 1px solid rgba(138,155,173,0.1);
+  }
+  .hero-card:last-child { border-right: none; }
+  .hero-card:hover { background: rgba(184,46,34,0.12); }
+  .hero-card-num {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--ember);
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  .hero-card-title {
+    font-family: var(--display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--cream);
+    text-transform: uppercase;
+  }
+
+  .scroll-down {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.2em;
+    color: var(--silver); animation: bob 2s ease-in-out infinite;
+  }
+  .scroll-down::after {
+    content: '';
+    width: 1px; height: 36px;
+    background: linear-gradient(to bottom, var(--ember), transparent);
+  }
+  @keyframes bob { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(6px); } }
+
+  /* ── SECTIONS ── */
+  section { position: relative; }
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+    display: block;
+  }
+  .section-title {
+    font-family: var(--display);
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+  .section-divider {
+    width: 48px; height: 2px;
+    background: var(--ember);
+    margin-bottom: 2.5rem;
+  }
+
+  .bg-dark  { background: var(--dark); }
+  .bg-steel { background: var(--steel); }
+  .bg-mid   { background: var(--mid); }
+
+  /* ── HISTORY ── */
+  .unit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(138,155,173,0.1);
+    margin-bottom: 4rem;
+  }
+  .unit-card {
+    background: var(--dark);
+    padding: 2rem 1.8rem;
+    transition: background 0.2s;
+  }
+  .unit-card:hover { background: rgba(184,46,34,0.06); }
+  .unit-name {
+    font-family: var(--display);
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .unit-mod {
+    font-family: var(--display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+  }
+  .unit-body { font-size: 0.95rem; color: var(--cream); line-height: 1.75; }
+
+  .acq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .acq-item {
+    background: rgba(26,30,36,0.9);
+    border-left: 3px solid var(--ember);
+    padding: 2rem 1.8rem;
+    margin-bottom: 2px;
+  }
+  .acq-q {
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+  }
+  .acq-a { font-size: 0.95rem; color: var(--cream); line-height: 1.8; }
+
+  /* ── VARIANTS TABLE ── */
+  .spec-table-wrap { overflow-x: auto; margin-top: 2rem; }
+  .spec-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .spec-table th {
+    background: var(--ember-dim);
+    color: var(--white);
+    font-family: var(--display);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.9rem 1rem;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .spec-table td {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid rgba(138,155,173,0.1);
+    color: var(--cream);
+    vertical-align: top;
+  }
+  .spec-table tr:nth-child(even) td { background: rgba(255,255,255,0.025); }
+  .spec-table tr:hover td { background: rgba(184,46,34,0.07); }
+  .spec-table td:first-child {
+    font-family: var(--display);
+    color: var(--silver);
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .highlight { color: var(--ember); font-weight: 600; }
+
+  .core-specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: rgba(138,155,173,0.1);
+    margin-bottom: 3rem;
+  }
+  .core-spec {
+    background: var(--steel);
+    padding: 1.4rem 1.2rem;
+    text-align: center;
+  }
+  .core-spec-val {
+    font-family: var(--display);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--ember);
+    display: block;
+  }
+  .core-spec-lbl {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: var(--silver);
+    text-transform: uppercase;
+    display: block;
+    margin-top: 0.3rem;
+  }
+
+  /* ── BALLISTICS ── */
+  .ballist-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+  .ballist-card {
+    background: var(--steel);
+    padding: 2rem;
+    border-top: 3px solid var(--ember);
+  }
+  .ballist-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .ballist-name {
+    font-family: var(--display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+  .ballist-stat {
+    display: flex; justify-content: space-between;
+    padding: 0.45rem 0;
+    border-bottom: 1px solid rgba(138,155,173,0.12);
+    font-size: 0.9rem;
+  }
+  .ballist-stat:last-child { border-bottom: none; }
+  .ballist-stat span:first-child { color: var(--silver); }
+  .ballist-stat span:last-child { color: var(--cream); font-weight: 600; }
+
+  .tradeoff-box {
+    background: rgba(184,46,34,0.08);
+    border: 1px solid rgba(184,46,34,0.3);
+    padding: 2rem;
+  }
+  .tradeoff-title {
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ember);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  /* ── COMBAT ── */
+  .combat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(138,155,173,0.1); margin-bottom: 3rem; }
+  .combat-card {
+    background: var(--dark);
+    padding: 2.5rem 2rem;
+  }
+  .combat-op {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.25em;
+    color: var(--ember);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .combat-name {
+    font-family: var(--display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 1rem;
+  }
+
+  .operator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem; }
+  .operator-card {
+    background: var(--steel);
+    padding: 2rem;
+    border-left: 3px solid var(--ember);
+  }
+  .operator-name {
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ember);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.3rem;
+  }
+  .operator-unit {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--silver);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .operator-body { font-style: italic; font-size: 0.95rem; color: var(--cream); line-height: 1.8; }
+
+  .field-quote {
+    background: var(--mid);
+    padding: 3rem;
+    border-left: 4px solid var(--ember);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--cream);
+    line-height: 1.9;
+  }
+  .field-quote cite {
+    display: block;
+    margin-top: 1rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--silver);
+    font-style: normal;
+  }
+
+  /* ── ECOSYSTEM ── */
+  .eco-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(138,155,173,0.1); }
+  .eco-card {
+    background: var(--dark);
+    padding: 2rem 1.8rem;
+    transition: background 0.2s;
+  }
+  .eco-card:hover { background: rgba(184,46,34,0.07); }
+  .eco-icon {
+    font-family: var(--mono);
+    font-size: 1.8rem;
+    color: var(--ember);
+    margin-bottom: 1rem;
+  }
+  .eco-title {
+    font-family: var(--display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .eco-body { font-size: 0.9rem; color: var(--cream); line-height: 1.75; }
+
+  /* ── EPILOGUE ── */
+  #epilogue {
+    background: var(--black);
+    border-top: 1px solid rgba(184,46,34,0.2);
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+  .epilogue-title {
+    font-family: var(--display);
+    font-size: clamp(1.6rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: var(--white);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .epilogue-body {
+    max-width: 680px;
+    margin: 0 auto 3rem;
+    font-size: 1rem;
+    color: var(--cream);
+    line-height: 1.9;
+  }
+  .succession {
+    display: inline-flex; align-items: center; gap: 1.5rem;
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--silver);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 3rem;
+  }
+  .succession .arrow { color: var(--ember); font-size: 1.6rem; }
+  .succession .active { color: var(--white); }
+
+  footer {
+    background: var(--black);
+    border-top: 1px solid rgba(138,155,173,0.08);
+    text-align: center;
+    padding: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    color: rgba(138,155,173,0.4);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hero-cards { grid-template-columns: 1fr 1fr; }
+    .unit-grid, .ballist-grid, .combat-grid, .operator-grid, .acq-grid { grid-template-columns: 1fr; }
+    .eco-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+    .reticle { width: 320px; height: 320px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-logo">MK13 SWS &nbsp;/&nbsp; The Magnum Arrow</div>
+  <ul class="nav-links">
+    <li><a href="#history">History &amp; Pedigree</a></li>
+    <li><a href="#variants">Variant Lineage</a></li>
+    <li><a href="#ballistics">Terminal Ballistics</a></li>
+    <li><a href="#combat">Combat Records</a></li>
+    <li><a href="#ecosystem">Tactical Ecosystem</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="scan-line"></div>
+
+  <!-- Crosshair reticle — the signature element -->
+  <svg class="reticle" viewBox="0 0 520 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="260" cy="260" r="250" stroke="#B82E22" stroke-width="1.5"/>
+    <circle cx="260" cy="260" r="160" stroke="#B82E22" stroke-width="1"/>
+    <circle cx="260" cy="260" r="60"  stroke="#B82E22" stroke-width="1.5"/>
+    <circle cx="260" cy="260" r="5"   fill="#B82E22"/>
+    <line x1="0"   y1="260" x2="195" y2="260" stroke="#B82E22" stroke-width="1.5"/>
+    <line x1="325" y1="260" x2="520" y2="260" stroke="#B82E22" stroke-width="1.5"/>
+    <line x1="260" y1="0"   x2="260" y2="195" stroke="#B82E22" stroke-width="1.5"/>
+    <line x1="260" y1="325" x2="260" y2="520" stroke="#B82E22" stroke-width="1.5"/>
+    <line x1="195" y1="254" x2="195" y2="266" stroke="#B82E22" stroke-width="1"/>
+    <line x1="325" y1="254" x2="325" y2="266" stroke="#B82E22" stroke-width="1"/>
+    <line x1="160" y1="256" x2="160" y2="264" stroke="#B82E22" stroke-width="1"/>
+    <line x1="360" y1="256" x2="360" y2="264" stroke="#B82E22" stroke-width="1"/>
+    <line x1="100" y1="257" x2="100" y2="263" stroke="#B82E22" stroke-width="1"/>
+    <line x1="420" y1="257" x2="420" y2="263" stroke="#B82E22" stroke-width="1"/>
+    <line x1="254" y1="195" x2="266" y2="195" stroke="#B82E22" stroke-width="1"/>
+    <line x1="254" y1="325" x2="266" y2="325" stroke="#B82E22" stroke-width="1"/>
+    <line x1="256" y1="160" x2="264" y2="160" stroke="#B82E22" stroke-width="1"/>
+    <line x1="256" y1="360" x2="264" y2="360" stroke="#B82E22" stroke-width="1"/>
+    <line x1="10"  y1="260" x2="25"  y2="260" stroke="#B82E22" stroke-width="1"/>
+    <line x1="495" y1="260" x2="510" y2="260" stroke="#B82E22" stroke-width="1"/>
+    <line x1="260" y1="10"  x2="260" y2="25"  stroke="#B82E22" stroke-width="1"/>
+    <line x1="260" y1="495" x2="260" y2="510" stroke="#B82E22" stroke-width="1"/>
+    <text x="280" y="30" font-family="Share Tech Mono" font-size="12" fill="#B82E22" opacity="0.8">1000m</text>
+    <text x="280" y="50" font-family="Share Tech Mono" font-size="10" fill="#B82E22" opacity="0.5">1200m</text>
+    <text x="280" y="68" font-family="Share Tech Mono" font-size="10" fill="#B82E22" opacity="0.3">1500m</text>
+  </svg>
+
+  <div class="hero-content">
+    <span class="hero-eyebrow">NSWC Crane &nbsp;/&nbsp; .300 Winchester Magnum &nbsp;/&nbsp; SOCOM Precision Sniper Weapon System</span>
+    <h1 class="hero-title">MK<span>13</span></h1>
+    <p class="hero-subtitle">Sniper Weapon System &nbsp;/&nbsp; The Magnum Arrow</p>
+    <blockquote class="hero-quote">
+      It was not birthed by a defense conglomerate inside a closed laboratory. Instead, it was an operational masterpiece driven by the tactical pain points of front-line operators, meticulously handcrafted by master gunsmiths at NSWC Crane using top-tier Commercial Off-The-Shelf (COTS) components. This is the chronicle of a bottom-up procurement victory that subverted traditional military bureaucracy to claim the throne of medium-caliber bolt-action sniper weapons.
+    </blockquote>
+    <div class="hero-cards">
+      <a href="#history"    class="hero-card"><span class="hero-card-num">01</span><span class="hero-card-title">History &amp; Pedigree</span></a>
+      <a href="#variants"   class="hero-card"><span class="hero-card-num">02</span><span class="hero-card-title">Variant Lineage</span></a>
+      <a href="#ballistics" class="hero-card"><span class="hero-card-num">03</span><span class="hero-card-title">Terminal Ballistics</span></a>
+      <a href="#combat"     class="hero-card"><span class="hero-card-num">04</span><span class="hero-card-title">Combat Records</span></a>
+    </div>
+  </div>
+  <div class="scroll-down">SCROLL</div>
+</section>
+
+<!-- ── HISTORY ── -->
+<section id="history" class="bg-dark">
+  <div class="section-inner">
+    <span class="section-label">Page 01 &nbsp;/&nbsp; History &amp; Pedigree</span>
+    <h2 class="section-title">Operational Requirements<br>&amp; Procurement Politics</h2>
+    <div class="section-divider"></div>
+
+    <div class="unit-grid">
+      <div class="unit-card">
+        <div class="unit-name">US Navy SEALs — Naval Special Warfare</div>
+        <div class="unit-mod">Genesis of the Mod 0 / Mod 1</div>
+        <p class="unit-body">In the late 1980s and early 1990s, Naval Special Warfare Command identified that standard-issue 7.62mm NATO rifles suffered severe windage deflection in intense maritime crosswinds during VBSS and coastal reconnaissance operations. Operators also lacked the long-range kinetic energy needed to defeat ship bulkheads and fortified barriers — prompting a direct request to NSWC Crane for a dedicated .300 Win Mag platform.</p>
+      </div>
+      <div class="unit-card">
+        <div class="unit-name">75th Ranger Regiment</div>
+        <div class="unit-mod">The Mod 2 Urgent Operational Requirement</div>
+        <p class="unit-body">During the early phases of the Global War on Terrorism, the Army's premier light infantry raid unit required a medium-caliber sniper system combining high terminal performance with vehicular portability. NSWC Crane used a "parts-bin" approach, introducing the British AI AICS 2.0 Olive Drab folding chassis onto the Remington 700 long-action receiver for the first time.</p>
+      </div>
+      <div class="unit-card">
+        <div class="unit-name">NSW / SEALs Transitional Bridge</div>
+        <div class="unit-mod">Mod 3 &amp; Mod 4 Development</div>
+        <p class="unit-body">Serving as the bridge between the traditional McMillan fixed fiberglass stock and the modern AICS chassis, the Mod 3 remains exceptionally rare — only approximately 50 rifles were produced worldwide. In a notable engineering detail, Crane also produced a mirror-image left-hand variant, officially designated MK13 Mod 4 in U.S. military documentation.</p>
+      </div>
+      <div class="unit-card">
+        <div class="unit-name">SOCOM Joint Special Operations</div>
+        <div class="unit-mod">The Mod 5 Golden Era</div>
+        <p class="unit-body">As counterterrorism operations intensified, the Mod 5 integrated an FDE AICS 2.0 chassis, dedicated suppressor interface, and the highly reliable M16-style extractor — becoming the SOCOM-wide standard jointly adopted by Navy SEALs, Rangers, and MARSOC as the definitive long-range precision weapon.</p>
+      </div>
+      <div class="unit-card" style="grid-column: 1 / -1;">
+        <div class="unit-name">USMC — United States Marine Corps</div>
+        <div class="unit-mod">The Mod 7 Strategic Overhaul</div>
+        <p class="unit-body">The M40A6's 7.62mm NATO chambering left conventional Marine Scout Snipers unable to counter enemy machine gun fire networks beyond 1,000 meters in the mountains of Afghanistan. Marine Corps leadership ultimately set aside five decades of M40 lineage loyalty, authorizing the procurement of 356 MK13 Mod 7 systems in 2018 — adopting the platform that the SEALs had proven in combat and fully displacing the legacy sniper role.</p>
+      </div>
+    </div>
+
+    <span class="section-label" style="margin-top:3rem;">Technical Selection &amp; Bureaucratic Constraints</span>
+    <h3 class="section-title" style="font-size:1.8rem; margin-bottom:2rem;">Procurement Politics Decoded</h3>
+    <div class="acq-grid">
+      <div class="acq-item">
+        <div class="acq-q">Why Retain the Remington 700 Long Action Footprint?</div>
+        <p class="acq-a">Since Vietnam, NSWC Crane gunsmiths had accumulated deep institutional knowledge of the Remington 700 receiver's tolerances, with specialized tooling and blueprinting techniques already in place. Critically, the receiver's "Three Rings of Steel" safety architecture — bolt face enclosing the case head, barrel shank enclosing the bolt, and receiver enclosing the barrel — provided unmatched rigidity and containment for the brutal chamber pressures of .300 Win Mag.</p>
+      </div>
+      <div class="acq-item">
+        <div class="acq-q">Why the AICS Chassis Rather Than a Complete British AI Rifle?</div>
+        <p class="acq-a">Procuring a complete foreign-manufactured weapon would trigger the Buy American Act's stringent review process, adding years to the acquisition timeline. By categorizing the AICS as an accessory attached to a domestically-produced barreled action, Crane bypassed that bureaucratic bottleneck entirely. Technically, the AICS's integral aluminum V-block bedding eliminated the precision drift caused by epoxy glass-bedding failures under repeated .300 WM recoil — a problem endemic to traditional fiberglass stocks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VARIANTS ── -->
+<section id="variants" class="bg-steel">
+  <div class="section-inner">
+    <span class="section-label">Page 02 &nbsp;/&nbsp; Variant Lineage</span>
+    <h2 class="section-title">The Gunsmith's Masterwork</h2>
+    <div class="section-divider"></div>
+
+    <div class="core-specs">
+      <div class="core-spec"><span class="core-spec-val">Rem 700</span><span class="core-spec-lbl">Barreled Action</span></div>
+      <div class="core-spec"><span class="core-spec-val">.300 WM</span><span class="core-spec-lbl">Standard Caliber</span></div>
+      <div class="core-spec"><span class="core-spec-val">26.5 in</span><span class="core-spec-lbl">Barrel Length (Lilja)</span></div>
+      <div class="core-spec"><span class="core-spec-val">1:10</span><span class="core-spec-lbl">Rifling Twist Rate</span></div>
+      <div class="core-spec"><span class="core-spec-val">1,300m+</span><span class="core-spec-lbl">Effective Range</span></div>
+      <div class="core-spec"><span class="core-spec-val">5 Rnd</span><span class="core-spec-lbl">Detachable Box Magazine</span></div>
+    </div>
+
+    <div class="spec-table-wrap">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Component / Attribute</th>
+            <th>Mod 2<br><small style="opacity:.7">Ranger / Army</small></th>
+            <th>Mod 3<br><small style="opacity:.7">NSW/SEALs Transitional</small></th>
+            <th>Mod 5<br><small style="opacity:.7">SOCOM Standard</small></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Chassis / Stock</td><td>AICS 2.0 Folding (Olive Drab)</td><td>McMillan A2 Fixed Fiberglass</td><td class="highlight">AICS 2.0 Folding (FDE)</td></tr>
+          <tr><td>Chamber</td><td>A191</td><td>Similar to early variants</td><td class="highlight">MK248 Mod 1 optimized</td></tr>
+          <tr><td>Extractor</td><td>Sako-style</td><td>Sako-style</td><td class="highlight">M16-style (max reliability)</td></tr>
+          <tr><td>Rail System</td><td>Remington MARS 30 MOA (early)</td><td>MIRS / MARS Rev B (later)</td><td>Remington MARS 20 MOA / Badger IMUNS</td></tr>
+          <tr><td>Suppressor Compatibility</td><td>Limited (not MK11-compatible)</td><td>MK11 suppressor compatible</td><td class="highlight">Fully optimized — standard KAC MK11 QD</td></tr>
+          <tr><td>Primary Users</td><td>75th Ranger Regiment</td><td>NSW / SEALs (L/R-hand Mod 3/4)</td><td>SOCOM-wide (Navy / Army / MARSOC)</td></tr>
+          <tr><td>Production Volume</td><td>Limited — transitional "parts-bin"</td><td>Extremely rare (~50 rifles)</td><td class="highlight">Mass-produced — SOF standard</td></tr>
+          <tr><td>Primary Optic</td><td>Leupold 4.5-14x FFP (A191 BDC)</td><td>Unit-dependent</td><td>Nightforce NXS 3.5-15x / 5.5-22x</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:3rem; background: var(--mid); padding:2.5rem; border-left:3px solid var(--ember);">
+      <div class="unit-name" style="margin-bottom:0.8rem;">NSWC Crane Craftsmanship: The Blueprinting Standard</div>
+      <p class="unit-body">The MK13's exceptional accuracy originates in the meticulous "blueprinting" process executed by Crane's master gunsmiths on every single receiver: re-cutting commercial receiver threads to precision tolerances, hand-lapping bolt-to-receiver contact surfaces to 100% engagement, and trueing the recoil lug perpendicularity. The conversion from a Sako-style to an M16-style extractor — machining a wider engagement groove into the bolt face — definitively eliminated the catastrophic case-head slippage that plagued earlier extractors under the brutal chamber pressures generated by .300 Win Mag in sand and extreme-heat environments.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── BALLISTICS ── -->
+<section id="ballistics" class="bg-mid">
+  <div class="section-inner">
+    <span class="section-label">Page 03 &nbsp;/&nbsp; Terminal Ballistics</span>
+    <h2 class="section-title">.300 Win Mag<br>Unleashed</h2>
+    <div class="section-divider"></div>
+
+    <div class="ballist-grid">
+      <div class="ballist-card">
+        <div class="ballist-label">Service Ammunition — Generation I</div>
+        <div class="ballist-name">MK 248 Mod 0 (A191)</div>
+        <div class="ballist-stat"><span>Projectile</span><span>190gr Sierra MatchKing BTHP</span></div>
+        <div class="ballist-stat"><span>Muzzle Velocity</span><span>~2,900 FPS</span></div>
+        <div class="ballist-stat"><span>Ballistic Profile</span><span>Flat, extended-range supersonic</span></div>
+        <div class="ballist-stat"><span>Primary Variants</span><span>Mod 0 / Mod 1 / Mod 2</span></div>
+      </div>
+      <div class="ballist-card">
+        <div class="ballist-label">Service Ammunition — Generation II</div>
+        <div class="ballist-name">MK 248 Mod 1</div>
+        <div class="ballist-stat"><span>Projectile</span><span>220gr heavyweight BTHP</span></div>
+        <div class="ballist-stat"><span>Muzzle Velocity</span><span>2,850 FPS</span></div>
+        <div class="ballist-stat"><span>Energy at 500 yds</span><span class="highlight">~2,450 ft-lbs</span></div>
+        <div class="ballist-stat"><span>Primary Variants</span><span>Mod 5 onward — SOF standard</span></div>
+      </div>
+    </div>
+
+    <div class="ballist-card" style="margin-bottom:2rem;">
+      <div class="ballist-label">Downrange Dominance</div>
+      <div class="ballist-name">Where 7.62mm NATO Fails, .300 Win Mag Prevails</div>
+      <p style="color:var(--cream); font-size:0.95rem; line-height:1.8;">.300 Winchester Magnum (7.62×67mm) delivers a significantly higher ballistic coefficient alongside a remarkably flat trajectory. While 7.62mm NATO rounds experience a sharp cliff in retained energy beyond 800 meters, the .300 Win Mag maintains supersonic flight well past 1,200 meters — dramatically reducing windage inputs and extending the sniper's lethal engagement envelope to ranges where the enemy has no effective answer.</p>
+    </div>
+
+    <div class="tradeoff-box">
+      <div class="tradeoff-title">⚠ The Cost of Power — An Honest Technical Assessment</div>
+      <p style="color:var(--cream); font-size:0.95rem; line-height:1.85;">The brutal <strong style="color:var(--ember);">31.5 ft-lbs of recoil energy</strong> demands significant physical discipline to maintain positional integrity across follow-up shots. More critically, the high chamber pressures and thermal output exact a severe toll on barrel life: while 7.62mm NATO systems routinely endure tens of thousands of rounds, the MK13's precision heavy barrel begins exhibiting measurable throat erosion and accuracy degradation after only <strong style="color:var(--ember);">1,000 to 1,200 rounds</strong> — requiring return to depot for rebarreling.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMBAT ── -->
+<section id="combat" class="bg-dark">
+  <div class="section-inner">
+    <span class="section-label">Page 04 &nbsp;/&nbsp; Combat Records &amp; Legacy</span>
+    <h2 class="section-title">A Throne Forged<br>in Fire</h2>
+    <div class="section-divider"></div>
+
+    <div class="combat-grid">
+      <div class="combat-card">
+        <div class="combat-op">Operation Enduring Freedom &nbsp;/&nbsp; Afghanistan</div>
+        <div class="combat-name">Death in the Hindu Kush</div>
+        <p class="unit-body">In the high-altitude, open terrain of Afghanistan, standard 7.62mm rifles were effectively neutralized by energy decay in mountain-to-mountain engagements. The MK13 series accumulated a documented legacy of confirmed kills at 1,200 to 1,500 meters, successfully suppressing enemy PKM machine gun networks and fundamentally shifting the tactical initiative back to coalition forces.</p>
+      </div>
+      <div class="combat-card">
+        <div class="combat-op">Operation Iraqi Freedom &nbsp;/&nbsp; Ramadi &amp; Fallujah</div>
+        <div class="combat-name">The Overwatch Reaper</div>
+        <p class="unit-body">In the corridor street-fighting of Ramadi and Fallujah, the MK13 provided decisive long-range overwatch. Its high kinetic energy at extended range allowed direct penetration of the hollow concrete block walls and earthen barriers common in Iraqi urban construction — precisely neutralizing threats sheltering within and behind structures that would have absorbed 7.62mm fire.</p>
+      </div>
+    </div>
+
+    <div style="margin:3rem 0;">
+      <span class="section-label">The Operators Who Chose It</span>
+      <h3 class="section-title" style="font-size:1.8rem; margin-bottom:2rem;">Famous Operators</h3>
+      <div class="operator-grid">
+        <div class="operator-card">
+          <div class="operator-name">Chris Kyle</div>
+          <div class="operator-unit">SEAL Team 3 &nbsp;/&nbsp; "The Devil of Ramadi"</div>
+          <p class="operator-body">In his memoir <em>American Sniper</em>, Kyle explicitly noted that while he rotated between multiple calibers, the .300 Win Mag MK13 was his most trusted long-range instrument — praising its trajectory as near-perfect for the engagement distances he encountered in Iraq. Its flat-shooting performance at extreme range earned his consistent preference in the field.</p>
+        </div>
+        <div class="operator-card">
+          <div class="operator-name">Robert J. O'Neill</div>
+          <div class="operator-unit">DEVGRU (SEAL Team 6) &nbsp;/&nbsp; Senior Operator</div>
+          <p class="operator-body">Throughout his career in DEVGRU's elite assault squadrons, the MK13 system served as O'Neill's standard sniper platform for hostage rescue and high-value target interdiction missions. The system's single-shot terminal performance made it the natural selection for operations where shot economy and decisive incapacitation were non-negotiable requirements.</p>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="field-quote">
+      When we transitioned from the M40A6 to the MK13 Mod 7, it felt like stepping off a propeller aircraft directly onto a jet. A thousand yards used to be our limit — a range where we were fighting the wind every shot. On the Mod 7, that's just warm-up distance. Its round is still supersonic at 1,300 meters. For the enemy, that means truly silent, totally unpredictable death.
+      <cite>— U.S. Marine Corps Scout Sniper, on transitioning to the MK13 Mod 7</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ── ECOSYSTEM ── -->
+<section id="ecosystem" class="bg-steel">
+  <div class="section-inner">
+    <span class="section-label">Page 05 &nbsp;/&nbsp; Tactical Ecosystem</span>
+    <h2 class="section-title">Optics, Night Vision<br>&amp; Suppression</h2>
+    <div class="section-divider"></div>
+
+    <div class="eco-grid">
+      <div class="eco-card">
+        <div class="eco-icon">◎</div>
+        <div class="eco-title">The Nightforce Optics Standard</div>
+        <p class="eco-body">From early Leupold fixed-power glass to the Mod 5/7-era Nightforce NXS variable-power combat scopes (3.5-15x and 5.5-22x), the optic progression mirrors the platform's own evolution. The Horus reticle's "Christmas tree" grid pattern empowers the shooter to apply real-time wind and elevation holds across multiple target distances without breaking position to dial — a decisive speed advantage in dynamic engagements.</p>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">◈</div>
+        <div class="eco-title">Clip-On Night Vision Integration</div>
+        <p class="eco-body">The Remington MARS rail (30 MOA on Mod 2 / 20 MOA on Mod 5) and the Badger Ordnance IMUNS provide a rigid forward-mount platform for clip-on devices like the AN/PVS-30. This architecture allows the operator to mount heavy night-vision optics directly in front of the daytime scope — transitioning between full-light and no-light environments while preserving the original daytime zero without any re-engagement.</p>
+      </div>
+      <div class="eco-card">
+        <div class="eco-icon">⊕</div>
+        <div class="eco-title">KAC Quick-Detach Suppression</div>
+        <p class="eco-body">The Mod 3 and Mod 5 muzzle profiles were optimized specifically to interface with the KAC MK11 quick-detach suppressor. Beyond the substantial reduction in muzzle flash and report, the suppressor's internal baffle geometry measurably reduces muzzle rise — significantly improving the shooter's ability to track impacts through the scope and execute rapid, accurate follow-up shots.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EPILOGUE ── -->
+<section id="epilogue">
+  <div class="epilogue-title">The Undisputed Throne of Medium-Caliber Bolt-Action</div>
+  <p class="epilogue-body">The MK13 family defined the paradigm of American SOF ultra-long-range precision engagement for two decades, built on the perfect triad of proven commercial architecture, purpose-designed heavy ammunition, and handcrafted special operations gunsmithing.</p>
+  <div class="succession">
+    <span class="active">MK13 Mod 7</span>
+    <span class="arrow">→</span>
+    <span>Barrett MK22 MRAD</span>
+  </div>
+  <p class="epilogue-body" style="font-size:0.95rem; opacity:0.8;">As the operational environment continues to evolve, SOCOM's Advanced Sniper Rifle (ASR) program has formally transitioned the long-range precision role to the Barrett MK22 — a multi-caliber platform capable of rapid conversion between .300 Win Mag, .338 Lapua Magnum, and 7.62mm NATO. Yet what the MK13 wrote in blood across the mountains of Afghanistan and the streets of Iraq has already secured its permanent place in the annals of precision weapons history.</p>
+</section>
+
+<footer>
+  MK13 Sniper Weapon System (SWS) &nbsp;/&nbsp; Historical &amp; Educational Reference &nbsp;/&nbsp; NSWC Crane &nbsp;/&nbsp; .300 Winchester Magnum &nbsp;/&nbsp; GWOT Era Precision Weapons Documentation
+</footer>
+
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.unit-card, .ballist-card, .eco-card, .combat-card, .operator-card, .acq-item, .core-spec').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+</body>
+</html>
